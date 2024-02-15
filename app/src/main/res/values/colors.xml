@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <color name="black">#FF000000</color>
+    <color name="white">#FFFFFFFF</color>
+    <color name="filter_Back_ground">#594141</color>
+    <color name="select_filter_item_Back_ground">#B68C8C</color>
+</resources>
