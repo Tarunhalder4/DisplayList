@@ -25,7 +25,7 @@ class FilterAdapter (private val list: List<FilterModel>,private val viewAllActi
 
         holder.binding.root.setOnClickListener {
 
-            if(holder.binding.filterTitle.text == FilterValue.CLEAR){
+            if(holder.binding.filterTitle.text == Constant.CLEAR){
                 viewAllActivity.reset()
             }else{
                 val bottomSheet = BottomSheetDialog(holder.itemView.context)

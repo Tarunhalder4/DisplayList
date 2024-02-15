@@ -15,8 +15,6 @@ import dagger.hilt.android.AndroidEntryPoint
 @AndroidEntryPoint
 class MainActivity : AppCompatActivity() {
 
-    /////"id": 48,"title": "50 Blues Rhythms You MUST Know","educator": "Corey Congilio",
-
     private lateinit var binding: ActivityMainBinding
     private lateinit var viewModel:ViewModel
 

@@ -42,13 +42,13 @@ class BottomSheetAdapter (private val tag:String, private val list: List<String>
 
     private fun setValueInFilerList(tag: String,value:String){
         when(tag){
-            FilterValue.CURRICULM_ALL ->
+            Constant.CURRICULM_ALL ->
                 ViewAllActivity.curriculumFilter.add(value)
-            FilterValue.SERIES_ALL ->
+            Constant.SERIES_ALL ->
                 ViewAllActivity.seriesFilter.add(value)
-            FilterValue.STYLE_ALL ->
+            Constant.STYLE_ALL ->
                 ViewAllActivity.styleFilter.add(value)
-            FilterValue.SKILL_ALL ->
+            Constant.SKILL_ALL ->
                 ViewAllActivity.skillFilter.add(value)
         }
     }

@@ -1,6 +1,5 @@
 package com.example.interview1
 
-import com.example.interview1.model.Result
 import com.example.interview1.model.SongsModel
 import retrofit2.Call
 import javax.inject.Inject

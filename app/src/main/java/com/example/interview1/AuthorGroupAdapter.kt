@@ -37,8 +37,8 @@ class AuthorGroupAdapter(private val list: List<AuthorGroupModel>):RecyclerView.
 
         binding.textView.setOnClickListener{
             val intent = Intent(holder.binding.root.context,ViewAllActivity::class.java)
-            intent.putExtra("group_title", list[position].groupTitle)
-            intent.putParcelableArrayListExtra("data", list[position].list)
+            intent.putExtra(Constant.GROUP_TITLE, list[position].groupTitle)
+            intent.putParcelableArrayListExtra(Constant.DATA, list[position].list)
             holder.binding.root.context.startActivity(intent)
         }
 
