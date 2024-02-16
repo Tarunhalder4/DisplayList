@@ -5,6 +5,7 @@ object Constant {
     const val CURRICULM_ALL = "Curriculm: All"
     const val SERIES_ALL = "Series: All"
     const val STYLE_ALL = "Style: All"
+    const val EDUCATOR = "educator"
 
     const val CLEAR = "clear"
     const val DATA = "data"

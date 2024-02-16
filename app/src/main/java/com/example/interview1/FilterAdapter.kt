@@ -35,7 +35,8 @@ class FilterAdapter (private val list: List<FilterModel>,private val viewAllActi
 
                 binding.recyclerView.apply {
                     this.layoutManager = LinearLayoutManager(holder.itemView.context)
-                    this.adapter =  BottomSheetAdapter(list[position].title,list[position].option,bottomSheet)
+                  //  this.adapter =  BottomSheetAdapter(list[position].title,list[position].option,bottomSheet)
+                    this.adapter =  BottomSheetAdapter(list[position].title,list.get(position).option,bottomSheet)
                 }
 
                 bottomSheet.setContentView(binding.root)

@@ -1,3 +1,3 @@
 package com.example.interview1
 
-data class FilterModel(val title:String,val option:List<String>)
+data class FilterModel(val title:String,val option:MutableSet<String>)

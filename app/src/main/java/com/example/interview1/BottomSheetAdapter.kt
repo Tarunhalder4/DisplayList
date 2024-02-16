@@ -1,5 +1,6 @@
 package com.example.interview1
 
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -8,7 +9,7 @@ import androidx.recyclerview.widget.RecyclerView
 import com.example.interview1.databinding.BottomSheetListBinding
 import com.google.android.material.bottomsheet.BottomSheetDialog
 
-class BottomSheetAdapter (private val tag:String, private val list: List<String>,private val bottomSheet:BottomSheetDialog): RecyclerView.Adapter<BottomSheetAdapter.ViewHolder>() {
+class BottomSheetAdapter (private val tag:String, private val list: MutableSet<String>,private val bottomSheet:BottomSheetDialog): RecyclerView.Adapter<BottomSheetAdapter.ViewHolder>() {
 
     private lateinit var binding: BottomSheetListBinding
     companion object{
@@ -26,7 +27,8 @@ class BottomSheetAdapter (private val tag:String, private val list: List<String>
     }
 
     override fun onBindViewHolder(holder: ViewHolder, position: Int) {
-        holder.binding.item.text = list[position]
+        //holder.binding.item.text = list[position]
+        holder.binding.item.text = list.elementAt(position).toString()
 
         holder.binding.item.setOnClickListener {
             holder.binding.check.visibility = View.VISIBLE
@@ -50,7 +52,16 @@ class BottomSheetAdapter (private val tag:String, private val list: List<String>
                 ViewAllActivity.styleFilter.add(value)
             Constant.SKILL_ALL ->
                 ViewAllActivity.skillFilter.add(value)
+            Constant.EDUCATOR ->
+                ViewAllActivity.educatorFilter.add(value)
         }
+
+        Log.d("tarun", "curriculumFilter: ${ViewAllActivity.curriculumFilter.size}")
+        Log.d("tarun", "seriesFilte: ${ViewAllActivity.seriesFilter.size}")
+        Log.d("tarun", "styleFiltert: ${ViewAllActivity.styleFilter.size}")
+        Log.d("tarun", "skillFiltert: ${ViewAllActivity.skillFilter.size}")
+        Log.d("tarun", "educatorFilter: ${ViewAllActivity.educatorFilter}")
+
     }
 
 

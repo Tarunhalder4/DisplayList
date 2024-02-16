@@ -3,6 +3,7 @@ package com.example.interview1
 import android.os.Bundle
 import android.text.Editable
 import android.text.TextWatcher
+import android.util.Log
 import androidx.appcompat.app.AppCompatActivity
 import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.LinearLayoutManager
@@ -21,7 +22,14 @@ class ViewAllActivity : AppCompatActivity() {
         var seriesFilter = ArrayList<String>()
         var skillFilter = ArrayList<String>()
         var styleFilter = ArrayList<String>()
+        var educatorFilter = ArrayList<String>()
     }
+
+    private var curriculumFilterData = mutableSetOf<String>()
+    private var seriesFilterData = mutableSetOf<String>()
+    private var skillFilterData = mutableSetOf<String>()
+    private var styleFilterData = mutableSetOf<String>()
+    private var educatorFilterData =mutableSetOf<String>()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -30,13 +38,17 @@ class ViewAllActivity : AppCompatActivity() {
         setContentView(binding.root)
 
         binding.toolbar.title = intent.getStringExtra(Constant.GROUP_TITLE)
+        binding.toolbar.setNavigationOnClickListener { finish() }
 
         val filterModel = listOf(
             FilterModel(Constant.CLEAR,FilterValue.emptyList),
-            FilterModel(Constant.SKILL_ALL,FilterValue.skill_tags),
-            FilterModel(Constant.CURRICULM_ALL,FilterValue.curriculum_tags),
-            FilterModel(Constant.SERIES_ALL,FilterValue.series_tags),
-            FilterModel(Constant.STYLE_ALL,FilterValue.style_tags))
+            FilterModel(Constant.SKILL_ALL,skillFilterData),
+            FilterModel(Constant.CURRICULM_ALL,curriculumFilterData),
+            FilterModel(Constant.SERIES_ALL,seriesFilterData),
+            FilterModel(Constant.STYLE_ALL,styleFilterData),
+            FilterModel(Constant.EDUCATOR,educatorFilterData)
+        )
+
 
 
         binding.filterRec.layoutManager = LinearLayoutManager(this,LinearLayoutManager.HORIZONTAL,false)
@@ -46,6 +58,8 @@ class ViewAllActivity : AppCompatActivity() {
         myList = intent.getParcelableArrayListExtra(Constant.DATA)
         adapter = AuthorAdaptor(myList)
         binding.Rec.adapter = adapter
+
+        fillFilterData()
 
 
         binding.searchView.addTextChangedListener(object : TextWatcher {
@@ -76,8 +90,7 @@ class ViewAllActivity : AppCompatActivity() {
 
     private fun filterObserver(){
         BottomSheetAdapter.filterValue1.observe(this){ filterValue ->
-            adapter.updateData(filter(myList, curriculumFilter, seriesFilter, skillFilter, styleFilter))
-
+            adapter.updateData(filter(myList, curriculumFilter, seriesFilter, skillFilter, styleFilter, educatorFilter))
         }
     }
 
@@ -85,14 +98,42 @@ class ViewAllActivity : AppCompatActivity() {
                        curriculumFilter:List<String>,
                        seriesFilter:List<String>,
                        skillFilter:List<String>,
-                       styleFilter:List<String>):List<Index>? {
-        val list =   newList?.filter { index ->
-            index.curriculum_tags.containsAll(curriculumFilter) &&
-                    index.series_tags.containsAll(seriesFilter) &&
-                    index.skill_tags.containsAll(skillFilter) &&
-                    index.style_tags.containsAll(styleFilter)
+                       styleFilter:List<String>,
+                       educator:List<String>):List<Index>? {
+
+        var list:List<Index>? = ArrayList<Index>()
+        if(educator.size > 1)
+            return list
+
+        if(educator.size == 1){
+            list =   newList?.filter { index ->
+                index.curriculum_tags.containsAll(curriculumFilter) &&
+                        index.series_tags.containsAll(seriesFilter) &&
+                        index.skill_tags.containsAll(skillFilter) &&
+                        index.style_tags.containsAll(styleFilter)&&
+                        index.educator == educator[0]
+            }
+        }else{
+            list =   newList?.filter { index ->
+                index.curriculum_tags.containsAll(curriculumFilter) &&
+                        index.series_tags.containsAll(seriesFilter) &&
+                        index.skill_tags.containsAll(skillFilter) &&
+                        index.style_tags.containsAll(styleFilter)
+            }
         }
         return list
+    }
+
+    private fun fillFilterData(){
+        myList?.forEach {it->
+            curriculumFilterData.addAll(it.curriculum_tags)
+            seriesFilterData.addAll(it.series_tags)
+            skillFilterData.addAll(it.skill_tags)
+            styleFilterData.addAll(it.style_tags)
+            educatorFilterData.add(it.educator)
+        }
+
+        Log.d("tarun", "fillFilterData: ${educatorFilterData.size}")
     }
 
     fun reset(){
@@ -100,6 +141,7 @@ class ViewAllActivity : AppCompatActivity() {
         seriesFilter.clear()
         skillFilter.clear()
         styleFilter.clear()
+        educatorFilter.clear()
         adapter.updateData(myList)
     }
 }

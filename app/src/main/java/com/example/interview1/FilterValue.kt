@@ -1,7 +1,7 @@
 package com.example.interview1
 
 object FilterValue {
-    val emptyList = listOf("")
+    val emptyList = mutableSetOf("")
 
     val style_tags = listOf("Blues","Multi-Style","Blues-Rock","Multi-Style","Country",
         "Acoustic Blues","Jazz",
