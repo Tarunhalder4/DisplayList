@@ -1,8 +1,6 @@
 package com.example.interview1
 
-import android.util.Log
 import android.view.LayoutInflater
-import android.view.View
 import android.view.ViewGroup
 import androidx.lifecycle.MutableLiveData
 import androidx.recyclerview.widget.RecyclerView
@@ -30,11 +28,13 @@ class BottomSheetAdapter (private val tag:String, private val list: MutableSet<S
         //holder.binding.item.text = list[position]
         holder.binding.item.text = list.elementAt(position).toString()
 
+        setBackGroundInFilerList(tag,list.elementAt(position).toString(),holder.binding)
+
         holder.binding.item.setOnClickListener {
-            holder.binding.check.visibility = View.VISIBLE
+           // holder.binding.check.visibility = View.VISIBLE
             holder.binding.item.setBackgroundResource(R.color.select_filter_item_Back_ground)
 
-            setValueInFilerList(tag,holder.binding.item.text.toString())
+            setValueInFilerList(tag,holder.binding.item.text.toString(), holder.binding,true)
             filterValue1.postValue(holder.binding.item.text.toString())
 
             bottomSheet.dismiss()
@@ -42,25 +42,83 @@ class BottomSheetAdapter (private val tag:String, private val list: MutableSet<S
 
     }
 
-    private fun setValueInFilerList(tag: String,value:String){
-        when(tag){
+    private fun setValueInFilerList(tag: String,value:String, binding: BottomSheetListBinding,flag:Boolean) {
+        when (tag) {
             Constant.CURRICULM_ALL ->
-                ViewAllActivity.curriculumFilter.add(value)
+                if (ViewAllActivity.curriculumFilter.contains(value)) {
+                    ViewAllActivity.curriculumFilter.remove(value)
+                    binding.item.setBackgroundResource(R.color.filter_Back_ground)
+                } else {
+                    ViewAllActivity.curriculumFilter.add(value)
+                    binding.item.setBackgroundResource(R.color.select_filter_item_Back_ground)
+                }
+
             Constant.SERIES_ALL ->
-                ViewAllActivity.seriesFilter.add(value)
+                if (ViewAllActivity.seriesFilter.contains(value)) {
+                    ViewAllActivity.seriesFilter.remove(value)
+                } else {
+                    ViewAllActivity.seriesFilter.add(value)
+                }
+            // ViewAllActivity.seriesFilter.add(value)
             Constant.STYLE_ALL ->
-                ViewAllActivity.styleFilter.add(value)
+                if (ViewAllActivity.styleFilter.contains(value)) {
+                    ViewAllActivity.styleFilter.remove(value)
+                } else {
+                    ViewAllActivity.styleFilter.add(value)
+                }
+            // ViewAllActivity.styleFilter.add(value)
             Constant.SKILL_ALL ->
-                ViewAllActivity.skillFilter.add(value)
+                if (ViewAllActivity.skillFilter.contains(value)) {
+                    ViewAllActivity.skillFilter.remove(value)
+                } else {
+                    ViewAllActivity.skillFilter.add(value)
+                }
+            // ViewAllActivity.skillFilter.add(value)
             Constant.EDUCATOR ->
-                ViewAllActivity.educatorFilter.add(value)
+                if (ViewAllActivity.educatorFilter.contains(value)) {
+                    ViewAllActivity.educatorFilter.remove(value)
+                } else {
+                    ViewAllActivity.educatorFilter.add(value)
+                }
+            // ViewAllActivity.educatorFilter.add(value)
         }
 
-        Log.d("tarun", "curriculumFilter: ${ViewAllActivity.curriculumFilter.size}")
-        Log.d("tarun", "seriesFilte: ${ViewAllActivity.seriesFilter.size}")
-        Log.d("tarun", "styleFiltert: ${ViewAllActivity.styleFilter.size}")
-        Log.d("tarun", "skillFiltert: ${ViewAllActivity.skillFilter.size}")
-        Log.d("tarun", "educatorFilter: ${ViewAllActivity.educatorFilter}")
+
+    }
+
+    private fun setBackGroundInFilerList(tag: String,value:String, binding: BottomSheetListBinding){
+        when(tag){
+            Constant.CURRICULM_ALL ->
+                if(ViewAllActivity.curriculumFilter.contains(value)){
+                    binding.item.setBackgroundResource(R.color.select_filter_item_Back_ground)
+                }else{
+                    binding.item.setBackgroundResource(R.color.filter_Back_ground)
+                }
+            Constant.SERIES_ALL ->
+                if(ViewAllActivity.seriesFilter.contains(value)){
+                    binding.item.setBackgroundResource(R.color.select_filter_item_Back_ground)
+                }else{
+                    binding.item.setBackgroundResource(R.color.filter_Back_ground)
+                }
+            Constant.STYLE_ALL ->
+                if(ViewAllActivity.styleFilter.contains(value)){
+                    binding.item.setBackgroundResource(R.color.select_filter_item_Back_ground)
+                }else{
+                    binding.item.setBackgroundResource(R.color.filter_Back_ground)
+                }
+            Constant.SKILL_ALL ->
+                if(ViewAllActivity.skillFilter.contains(value)){
+                    binding.item.setBackgroundResource(R.color.select_filter_item_Back_ground)
+                }else{
+                    binding.item.setBackgroundResource(R.color.filter_Back_ground)
+                }
+            Constant.EDUCATOR ->
+                if(ViewAllActivity.educatorFilter.contains(value)){
+                    binding.item.setBackgroundResource(R.color.select_filter_item_Back_ground)
+                }else{
+                    binding.item.setBackgroundResource(R.color.filter_Back_ground)
+                }
+        }
 
     }
 

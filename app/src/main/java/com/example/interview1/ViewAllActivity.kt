@@ -3,7 +3,6 @@ package com.example.interview1
 import android.os.Bundle
 import android.text.Editable
 import android.text.TextWatcher
-import android.util.Log
 import androidx.appcompat.app.AppCompatActivity
 import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.LinearLayoutManager
@@ -14,9 +13,13 @@ import com.example.interview1.model.Index
 class ViewAllActivity : AppCompatActivity() {
 
     private lateinit var binding: ActivityViewAllBinding
-    private var myList: ArrayList<Index>? = null
+   // private var myList: ArrayList<Index>? = null
+  //  private var myList: MutableLiveData<ArrayList<Index>> = MutableLiveData()
     private var adapter:AuthorAdaptor = AuthorAdaptor(ArrayList<Index>())
-
+    private var myList1:ArrayList<Index> = ArrayList()
+//    private var searchList:ArrayList<Index> = ArrayList()
+//    private var search = false
+//
     companion object{
         var curriculumFilter = ArrayList<String>()
         var seriesFilter = ArrayList<String>()
@@ -33,10 +36,12 @@ class ViewAllActivity : AppCompatActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-
         binding = ActivityViewAllBinding.inflate(layoutInflater)
         setContentView(binding.root)
 
+       clearFilter()
+
+        myList1 = intent.getParcelableArrayListExtra(Constant.DATA)!!
         binding.toolbar.title = intent.getStringExtra(Constant.GROUP_TITLE)
         binding.toolbar.setNavigationOnClickListener { finish() }
 
@@ -55,12 +60,22 @@ class ViewAllActivity : AppCompatActivity() {
         binding.filterRec.adapter = FilterAdapter(filterModel,this)
 
         binding.Rec.layoutManager = GridLayoutManager(this,2)
-        myList = intent.getParcelableArrayListExtra(Constant.DATA)
-        adapter = AuthorAdaptor(myList)
+
+
+        adapter = AuthorAdaptor(myList1)
         binding.Rec.adapter = adapter
+
+        mainSearch(myList1)
+
 
         fillFilterData()
 
+
+
+    }
+
+    private fun mainSearch(list:ArrayList<Index>){
+        filterObserver(list)
 
         binding.searchView.addTextChangedListener(object : TextWatcher {
             override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {
@@ -69,15 +84,16 @@ class ViewAllActivity : AppCompatActivity() {
 
             override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {
                 val data = ArrayList<Index>()
-                myList?.forEach {
-                    if(s.toString() in it.title.toLowerCase().toString() || s.toString() in it.educator.toLowerCase().toString()){
-                        data.add(it)
-                        adapter.updateData(data)
-                    }else{
-                        adapter.updateData(data)
-                    }
-                }
+                myList1.forEach { t1->
+                    if(s.toString() in t1.title.toLowerCase().toString() || s.toString() in t1.educator.toLowerCase().toString()){
+                        data.add(t1)
 
+                    }
+                    adapter.updateData(data)
+
+                }
+              //  myList1 = data
+              //  myList.postValue(data)
             }
 
             override fun afterTextChanged(s: Editable?) {
@@ -85,12 +101,16 @@ class ViewAllActivity : AppCompatActivity() {
             }
         })
 
-        filterObserver()
     }
 
-    private fun filterObserver(){
+    private fun filterObserver(myList:ArrayList<Index>){
         BottomSheetAdapter.filterValue1.observe(this){ filterValue ->
-            adapter.updateData(filter(myList, curriculumFilter, seriesFilter, skillFilter, styleFilter, educatorFilter))
+             filter(myList1, curriculumFilter, seriesFilter, skillFilter, styleFilter, educatorFilter)?.let {
+                // myList1 = ArrayList<Index>(it)
+                 val  newMyList1 = ArrayList<Index>(it)
+                 adapter.updateData(newMyList1)
+            }
+
         }
     }
 
@@ -125,7 +145,7 @@ class ViewAllActivity : AppCompatActivity() {
     }
 
     private fun fillFilterData(){
-        myList?.forEach {it->
+        myList1.forEach {it->
             curriculumFilterData.addAll(it.curriculum_tags)
             seriesFilterData.addAll(it.series_tags)
             skillFilterData.addAll(it.skill_tags)
@@ -133,15 +153,25 @@ class ViewAllActivity : AppCompatActivity() {
             educatorFilterData.add(it.educator)
         }
 
-        Log.d("tarun", "fillFilterData: ${educatorFilterData.size}")
     }
 
     fun reset(){
+        clearFilter()
+        myList1 = intent.getParcelableArrayListExtra(Constant.DATA)!!
+        adapter.updateData(myList1)
+      //  myList?.postValue(myList1)
+    }
+
+    private fun clearFilter(){
         curriculumFilter.clear()
         seriesFilter.clear()
         skillFilter.clear()
         styleFilter.clear()
         educatorFilter.clear()
-        adapter.updateData(myList)
+    }
+
+    override fun onBackPressed() {
+        super.onBackPressed()
+        finish()
     }
 }
