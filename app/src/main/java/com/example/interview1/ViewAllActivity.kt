@@ -13,13 +13,13 @@ import com.example.interview1.model.Index
 class ViewAllActivity : AppCompatActivity() {
 
     private lateinit var binding: ActivityViewAllBinding
-   // private var myList: ArrayList<Index>? = null
-  //  private var myList: MutableLiveData<ArrayList<Index>> = MutableLiveData()
     private var adapter:AuthorAdaptor = AuthorAdaptor(ArrayList<Index>())
     private var myList1:ArrayList<Index> = ArrayList()
-//    private var searchList:ArrayList<Index> = ArrayList()
-//    private var search = false
-//
+
+    private var searchList:ArrayList<Index> = ArrayList()
+    private var filterList:ArrayList<Index> = ArrayList()
+
+
     companion object{
         var curriculumFilter = ArrayList<String>()
         var seriesFilter = ArrayList<String>()
@@ -54,92 +54,90 @@ class ViewAllActivity : AppCompatActivity() {
             FilterModel(Constant.EDUCATOR,educatorFilterData)
         )
 
-
-
         binding.filterRec.layoutManager = LinearLayoutManager(this,LinearLayoutManager.HORIZONTAL,false)
         binding.filterRec.adapter = FilterAdapter(filterModel,this)
 
         binding.Rec.layoutManager = GridLayoutManager(this,2)
 
-
         adapter = AuthorAdaptor(myList1)
         binding.Rec.adapter = adapter
 
-        mainSearch(myList1)
-
+        mainSearch()
 
         fillFilterData()
 
-
-
     }
 
-    private fun mainSearch(list:ArrayList<Index>){
-        filterObserver(list)
+    private fun mainSearch(){
+        searchList = myList1
+        filterList = myList1
+        filterObserver()
 
         binding.searchView.addTextChangedListener(object : TextWatcher {
-            override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {
 
-            }
+            override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {}
 
             override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {
                 val data = ArrayList<Index>()
-                myList1.forEach { t1->
+                filterList.forEach { t1->
                     if(s.toString() in t1.title.toLowerCase().toString() || s.toString() in t1.educator.toLowerCase().toString()){
                         data.add(t1)
-
                     }
-                    adapter.updateData(data)
-
                 }
-              //  myList1 = data
-              //  myList.postValue(data)
-            }
-
-            override fun afterTextChanged(s: Editable?) {
+                searchList = data
+                adapter.updateData(data)
 
             }
+
+            override fun afterTextChanged(s: Editable?) {}
         })
 
     }
 
-    private fun filterObserver(myList:ArrayList<Index>){
+    private fun filterObserver(){
+
         BottomSheetAdapter.filterValue1.observe(this){ filterValue ->
-             filter(myList1, curriculumFilter, seriesFilter, skillFilter, styleFilter, educatorFilter)?.let {
-                // myList1 = ArrayList<Index>(it)
-                 val  newMyList1 = ArrayList<Index>(it)
-                 adapter.updateData(newMyList1)
+
+            var T1:ArrayList<Index> = ArrayList<Index>()
+            filter(searchList, curriculumFilter, seriesFilter, skillFilter, styleFilter, educatorFilter)?.let {outPut ->
+
+                T1 = outPut as ArrayList<Index>
             }
+
+            filterList = T1
+            adapter.updateData(T1)
 
         }
     }
 
-    private fun filter(newList:ArrayList<Index>?,
+    private fun filter(newList:ArrayList<Index>,
                        curriculumFilter:List<String>,
                        seriesFilter:List<String>,
                        skillFilter:List<String>,
                        styleFilter:List<String>,
                        educator:List<String>):List<Index>? {
-
         var list:List<Index>? = ArrayList<Index>()
-        if(educator.size > 1)
+        if(educator.size > 1){
             return list
+        }
 
         if(educator.size == 1){
-            list =   newList?.filter { index ->
+            list =   newList.filter { index ->
                 index.curriculum_tags.containsAll(curriculumFilter) &&
                         index.series_tags.containsAll(seriesFilter) &&
                         index.skill_tags.containsAll(skillFilter) &&
                         index.style_tags.containsAll(styleFilter)&&
                         index.educator == educator[0]
             }
-        }else{
-            list =   newList?.filter { index ->
+        }else {
+
+            list =   newList.filter { index ->
                 index.curriculum_tags.containsAll(curriculumFilter) &&
                         index.series_tags.containsAll(seriesFilter) &&
                         index.skill_tags.containsAll(skillFilter) &&
                         index.style_tags.containsAll(styleFilter)
             }
+
         }
         return list
     }
@@ -159,7 +157,8 @@ class ViewAllActivity : AppCompatActivity() {
         clearFilter()
         myList1 = intent.getParcelableArrayListExtra(Constant.DATA)!!
         adapter.updateData(myList1)
-      //  myList?.postValue(myList1)
+        searchList = myList1
+        filterList = myList1
     }
 
     private fun clearFilter(){
@@ -168,6 +167,14 @@ class ViewAllActivity : AppCompatActivity() {
         skillFilter.clear()
         styleFilter.clear()
         educatorFilter.clear()
+    }
+
+    private fun findFilterItemCount():Int{
+        return curriculumFilter.size+
+        seriesFilter.size+
+        skillFilter.size+
+        styleFilter.size+
+        educatorFilter.size
     }
 
     override fun onBackPressed() {
