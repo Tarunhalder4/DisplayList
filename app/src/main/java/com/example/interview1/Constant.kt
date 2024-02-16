@@ -10,4 +10,6 @@ object Constant {
     const val CLEAR = "clear"
     const val DATA = "data"
     const val GROUP_TITLE = "group_title"
+
+    const val IGNORE_VALUE = "ignore_value"
 }

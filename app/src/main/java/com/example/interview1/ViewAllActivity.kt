@@ -16,16 +16,13 @@ class ViewAllActivity : AppCompatActivity() {
     private var adapter:AuthorAdaptor = AuthorAdaptor(ArrayList<Index>())
     private var myList1:ArrayList<Index> = ArrayList()
 
-    private var searchList:ArrayList<Index> = ArrayList()
-    private var filterList:ArrayList<Index> = ArrayList()
-
-
     companion object{
         var curriculumFilter = ArrayList<String>()
         var seriesFilter = ArrayList<String>()
         var skillFilter = ArrayList<String>()
         var styleFilter = ArrayList<String>()
         var educatorFilter = ArrayList<String>()
+        var searchValue = ""
     }
 
     private var curriculumFilterData = mutableSetOf<String>()
@@ -69,8 +66,6 @@ class ViewAllActivity : AppCompatActivity() {
     }
 
     private fun mainSearch(){
-        searchList = myList1
-        filterList = myList1
         filterObserver()
 
         binding.searchView.addTextChangedListener(object : TextWatcher {
@@ -78,15 +73,7 @@ class ViewAllActivity : AppCompatActivity() {
             override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {}
 
             override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {
-                val data = ArrayList<Index>()
-                filterList.forEach { t1->
-                    if(s.toString() in t1.title.toLowerCase().toString() || s.toString() in t1.educator.toLowerCase().toString()){
-                        data.add(t1)
-                    }
-                }
-                searchList = data
-                adapter.updateData(data)
-
+                BottomSheetAdapter.filterValue1.postValue(s.toString())
             }
 
             override fun afterTextChanged(s: Editable?) {}
@@ -98,13 +85,16 @@ class ViewAllActivity : AppCompatActivity() {
 
         BottomSheetAdapter.filterValue1.observe(this){ filterValue ->
 
-            var T1:ArrayList<Index> = ArrayList<Index>()
-            filter(searchList, curriculumFilter, seriesFilter, skillFilter, styleFilter, educatorFilter)?.let {outPut ->
+            if(filterValue != Constant.IGNORE_VALUE){
+                searchValue = filterValue
+            }
 
+            var T1:ArrayList<Index> = ArrayList<Index>()
+            filter(myList1, curriculumFilter, seriesFilter, skillFilter, styleFilter, educatorFilter,
+                searchValue)?.let { outPut ->
                 T1 = outPut as ArrayList<Index>
             }
 
-            filterList = T1
             adapter.updateData(T1)
 
         }
@@ -115,7 +105,8 @@ class ViewAllActivity : AppCompatActivity() {
                        seriesFilter:List<String>,
                        skillFilter:List<String>,
                        styleFilter:List<String>,
-                       educator:List<String>):List<Index>? {
+                       educator:List<String>,
+                       s:String):List<Index>? {
         var list:List<Index>? = ArrayList<Index>()
         if(educator.size > 1){
             return list
@@ -128,6 +119,7 @@ class ViewAllActivity : AppCompatActivity() {
                         index.skill_tags.containsAll(skillFilter) &&
                         index.style_tags.containsAll(styleFilter)&&
                         index.educator == educator[0]
+                        && (s in index.title.toLowerCase() || s in index.educator.toLowerCase())
             }
         }else {
 
@@ -136,6 +128,7 @@ class ViewAllActivity : AppCompatActivity() {
                         index.series_tags.containsAll(seriesFilter) &&
                         index.skill_tags.containsAll(skillFilter) &&
                         index.style_tags.containsAll(styleFilter)
+                        && (s in index.title.toLowerCase() || s in index.educator.toLowerCase())
             }
 
         }
@@ -157,8 +150,7 @@ class ViewAllActivity : AppCompatActivity() {
         clearFilter()
         myList1 = intent.getParcelableArrayListExtra(Constant.DATA)!!
         adapter.updateData(myList1)
-        searchList = myList1
-        filterList = myList1
+        binding.searchView.text?.clear()
     }
 
     private fun clearFilter(){

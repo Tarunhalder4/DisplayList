@@ -35,7 +35,7 @@ class BottomSheetAdapter (private val tag:String, private val list: MutableSet<S
             holder.binding.item.setBackgroundResource(R.color.select_filter_item_Back_ground)
 
             setValueInFilerList(tag,holder.binding.item.text.toString(), holder.binding,true)
-            filterValue1.postValue(holder.binding.item.text.toString())
+            filterValue1.postValue(Constant.IGNORE_VALUE)
 
             bottomSheet.dismiss()
         }
