@@ -12,7 +12,7 @@ import com.example.interview1.model.Index
 
 class ViewAllActivity : AppCompatActivity() {
 
-    private lateinit var binding: ActivityViewAllBinding
+    public lateinit var binding: ActivityViewAllBinding
     private var adapter:AuthorAdaptor = AuthorAdaptor(ArrayList<Index>())
     private var myList1:ArrayList<Index> = ArrayList()
 
@@ -161,7 +161,7 @@ class ViewAllActivity : AppCompatActivity() {
         educatorFilter.clear()
     }
 
-    private fun findFilterItemCount():Int{
+    fun findFilterItemCount():Int{
         return curriculumFilter.size+
         seriesFilter.size+
         skillFilter.size+

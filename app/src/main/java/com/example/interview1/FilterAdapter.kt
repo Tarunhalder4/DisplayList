@@ -1,5 +1,6 @@
 package com.example.interview1
 
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.ViewGroup
 import androidx.recyclerview.widget.LinearLayoutManager
@@ -8,9 +9,11 @@ import com.example.interview1.databinding.BottomSheetBinding
 import com.example.interview1.databinding.FilterLayoutBinding
 import com.google.android.material.bottomsheet.BottomSheetDialog
 
-class FilterAdapter (private val list: List<FilterModel>,private val viewAllActivity: ViewAllActivity): RecyclerView.Adapter<FilterAdapter.ViewHolder>() {
+class FilterAdapter (private val list: List<FilterModel>,public val viewAllActivity: ViewAllActivity): RecyclerView.Adapter<FilterAdapter.ViewHolder>() {
 
     private lateinit var binding: FilterLayoutBinding
+    private var filterAdapter: FilterAdapter = this
+
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
         binding = FilterLayoutBinding.inflate(LayoutInflater.from(parent.context))
         return ViewHolder(binding)
@@ -24,9 +27,16 @@ class FilterAdapter (private val list: List<FilterModel>,private val viewAllActi
         holder.binding.filterTitle.text = list[position].title
 
         holder.binding.root.setOnClickListener {
+            Log.d("tarun", "onBindViewHolder: ")
 
             if(holder.binding.filterTitle.text == Constant.CLEAR){
-                viewAllActivity.reset()
+                if(viewAllActivity.findFilterItemCount() > 0){
+                    viewAllActivity.reset()
+                    holder.binding.filterTitle.setBackgroundColor(holder.binding.root.context.getColor(R.color.filter_Back_ground))
+                }else{
+                    holder.binding.filterTitle.setBackgroundColor(holder.binding.root.context.getColor(R.color.select_filter_item_Back_ground))
+                }
+
             }else{
                 val bottomSheet = BottomSheetDialog(holder.itemView.context)
 
@@ -36,7 +46,7 @@ class FilterAdapter (private val list: List<FilterModel>,private val viewAllActi
                 binding.recyclerView.apply {
                     this.layoutManager = LinearLayoutManager(holder.itemView.context)
                   //  this.adapter =  BottomSheetAdapter(list[position].title,list[position].option,bottomSheet)
-                    this.adapter =  BottomSheetAdapter(list[position].title,list.get(position).option,bottomSheet)
+                    this.adapter =  BottomSheetAdapter(list[position].title,list.get(position).option,bottomSheet,holder.binding, filterAdapter )
                 }
 
                 bottomSheet.setContentView(binding.root)
